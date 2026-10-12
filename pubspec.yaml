@@ -1,0 +1,17 @@
+name: keyframe_motion
+description: "Keyframe timeline animations for Flutter with spring curves and JSON serialization."
+version: 1.0.0
+repository: https://github.com/scadasystems/keyframe_motion
+publish_to: none
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

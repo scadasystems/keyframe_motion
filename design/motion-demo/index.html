@@ -1,0 +1,853 @@
+<title>keyframe_motion 모션 카탈로그</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 상단 고정 씬 클록 바 + 카테고리별 카드 그리드. 카드 = 사이니지 화면(16:9) + 키프레임 스트립 */
+:root {
+  --bg: #EDEFF2;
+  --surface: #FFFFFF;
+  --ink: #15181C;
+  --muted: #5A626D;
+  --line: #D3D8DF;
+  --accent: #C2410C;
+  --accent-soft: #FDE7D9;
+  --hot: #B91C1C;
+  --hot-soft: #FBE2E2;
+  --screen: #0D1015;
+  --screen-ink: #F3F5F8;
+  --rail: #E3E7EC;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1216; --surface: #171B21; --ink: #E6E9ED; --muted: #98A1AC; --line: #2A3038;
+    --accent: #FB923C; --accent-soft: #3A2414; --hot: #F87171; --hot-soft: #3B1A1A;
+    --screen: #05070A; --screen-ink: #F3F5F8; --rail: #232930; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1216; --surface: #171B21; --ink: #E6E9ED; --muted: #98A1AC; --line: #2A3038;
+  --accent: #FB923C; --accent-soft: #3A2414; --hot: #F87171; --hot-soft: #3B1A1A;
+  --screen: #05070A; --screen-ink: #F3F5F8; --rail: #232930; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.55; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; }
+header.top { padding-block: 32px 18px; display: grid; gap: 8px; }
+header.top .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+header.top h1 { margin: 0; font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+header.top p { margin: 0; color: var(--muted); max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-block: 10px; }
+.btn { font: inherit; font-weight: 500; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 6px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--muted); }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn svg { width: 14px; height: 14px; }
+.clock { display: flex; align-items: center; gap: 10px; flex: 1 1 300px; min-width: 0; }
+.clock input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; min-width: 11ch; text-align: right; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: 13px; border: 0; background: transparent; color: var(--muted); padding: 6px 10px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.label { font-size: 12px; color: var(--muted); }
+
+main { padding-block: 8px 48px; display: grid; gap: 36px; }
+section h2 { display: flex; align-items: baseline; gap: 10px; margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+section h2 .count { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-weight: 400; }
+section > p { margin: 0 0 14px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.card .meta { padding: 12px 14px 14px; display: grid; gap: 8px; flex: 1; align-content: start; }
+.card .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card .name { font-family: var(--font-mono); font-weight: 500; font-size: 14px; }
+.card .desc { margin: 0; color: var(--muted); font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-family: var(--font-mono); font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--rail); color: var(--muted); }
+.chip.hot { background: var(--hot-soft); color: var(--hot); }
+.chip.new { background: var(--accent-soft); color: var(--accent); }
+.card .open { font-size: 12px; padding: 4px 8px; }
+
+/* 사이니지 화면: 480x270 씬 좌표 캔버스를 카드 폭에 맞춰 통째로 축소 — 플레이어와 같은 방식 */
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--screen); overflow: hidden; }
+.canvas { position: absolute; left: 0; top: 0; width: 480px; height: 270px; transform-origin: 0 0; overflow: hidden;
+  background: radial-gradient(120% 90% at 20% 0%, #1B2230 0%, transparent 60%), var(--screen); }
+.el { position: absolute; will-change: transform, opacity; }
+.fx { position: absolute; inset: 0; }
+.tint, .shine { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden; }
+.tint { opacity: 0; }
+.shine b { position: absolute; top: -30%; bottom: -30%; width: 38%; transform: skewX(-18deg); }
+.ghost { position: absolute; border: 1px dashed rgba(255,255,255,.18); border-radius: 6px; pointer-events: none; }
+
+/* 요소 종류 */
+.k-price { background: #FFFFFF; color: #111; border-radius: 10px; display: grid; place-content: center; text-align: center; }
+.k-price .pn { font-size: 15px; color: #555; }
+.k-price .pv { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+.k-price .pv s { color: #999; font-weight: 600; }
+.k-badge { border-radius: 50%; background: #F59E0B; color: #1A1206; display: grid; place-content: center; font-weight: 700; font-size: 22px; letter-spacing: .02em; }
+.k-banner { border-radius: 8px; background: #FFFFFF; color: #111; display: grid; place-content: center; font-weight: 700; font-size: 26px; }
+.k-banner.gold { background: linear-gradient(135deg, #3A2A0C, #8A6A1E 55%, #3A2A0C); color: #FBE7B0; }
+.k-banner.red { background: #DC2626; color: #fff; }
+.k-banner.green { background: #15803D; color: #fff; }
+.k-tile { border-radius: 10px; display: grid; align-content: end; padding: 12px 14px; color: #fff; font-weight: 600; font-size: 18px;
+  background: radial-gradient(80% 70% at 75% 25%, #F97316 0%, transparent 60%), linear-gradient(160deg, #1E3A8A, #0F766E); }
+.k-tile.b { background: radial-gradient(80% 70% at 30% 30%, #FDE047 0%, transparent 60%), linear-gradient(160deg, #7C2D12, #B91C1C); }
+.k-tile.c { background: radial-gradient(80% 70% at 60% 70%, #A7F3D0 0%, transparent 60%), linear-gradient(160deg, #312E81, #6D28D9); }
+.k-text { display: grid; place-content: center; color: #fff; font-weight: 700; font-size: 36px; letter-spacing: -.02em; white-space: nowrap; }
+.k-row { border-radius: 6px; background: rgba(255,255,255,.08); color: #fff; display: flex; align-items: center; gap: 12px; padding: 0 14px; font-size: 16px; }
+.k-row i { width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; }
+.k-row span:last-child { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+.k-strip { display: flex; align-items: center; color: #FBE7B0; font-size: 22px; font-weight: 600; white-space: nowrap; }
+.k-photo { background:
+  radial-gradient(30% 22% at 72% 30%, #FFE7A8 0%, transparent 70%),
+  radial-gradient(60% 40% at 30% 85%, #14532D 0%, transparent 70%),
+  linear-gradient(180deg, #F59E0B 0%, #EA580C 38%, #7C2D12 62%, #1C1917 100%); }
+.k-photo::after { content: "가을 신메뉴"; position: absolute; left: 24px; bottom: 20px; color: #fff; font-weight: 700; font-size: 28px; }
+.k-sign .board { position: absolute; left: 0; right: 0; top: 34px; bottom: 0; border-radius: 8px; background: #FFFFFF; color: #111; display: grid; place-content: center; font-weight: 700; font-size: 24px; }
+.k-sign::before, .k-sign::after { content: ""; position: absolute; top: 0; height: 36px; width: 2px; background: #9CA3AF; }
+.k-sign::before { left: 30%; transform: rotate(14deg); transform-origin: top; }
+.k-sign::after { right: 30%; transform: rotate(-14deg); transform-origin: top; }
+.k-ring { border-radius: 50%; border: 8px solid rgba(255,255,255,.15); border-top-color: #F59E0B; }
+
+/* 키프레임 스트립 */
+.strip { display: grid; gap: 3px; }
+.trk { display: grid; grid-template-columns: 11.5ch 1fr; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.trk .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rail { position: relative; height: 12px; }
+.rail::before { content: ""; position: absolute; left: 0; right: 0; top: 5.5px; height: 1px; background: var(--line); }
+.kf { position: absolute; top: 2.5px; width: 7px; height: 7px; margin-left: -3.5px; background: var(--ink); transform: rotate(45deg); }
+.kf.step { transform: none; border-radius: 1px; }
+.kf.spring { border-radius: 50%; transform: none; background: var(--accent); }
+.ph { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--accent); }
+.more { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .kf { position: static; margin: 0; display: inline-block; }
+
+/* 상세 패널 */
+.overlay { position: fixed; inset: 0; z-index: 20; background: rgba(8, 10, 14, .55); display: grid; place-items: center; padding: 16px; }
+.panel { background: var(--surface); color: var(--ink); border-radius: 14px; width: min(1040px, 100%); max-height: calc(100% - 8px); overflow: auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.panel .left { padding: 18px; display: grid; gap: 12px; align-content: start; border-right: 1px solid var(--line); }
+.panel .right { padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.panel h3 { margin: 0; font-family: var(--font-mono); font-size: 18px; font-weight: 500; }
+.panel .stage { border-radius: 8px; }
+textarea { width: 100%; min-height: 360px; resize: vertical; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); tab-size: 2; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.status { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--rail); color: var(--muted); }
+.status.err { background: var(--hot-soft); color: var(--hot); }
+.status.ok { background: var(--accent-soft); color: var(--accent); }
+.panel .close { margin-left: auto; }
+.note { font-size: 12px; color: var(--muted); margin: 0; }
+
+@media (max-width: 760px) {
+  .panel { grid-template-columns: minmax(0, 1fr); }
+  .panel .left { border-right: 0; border-bottom: 1px solid var(--line); }
+  textarea { min-height: 240px; }
+}
+</style>
+
+<header class="top wrap">
+  <div class="eyebrow">keyframe_motion · JSON 스키마 v1</div>
+  <h1>keyframe_motion 모션 카탈로그</h1>
+  <p>모든 카드는 JSON 스키마 그대로 저장된 타임라인을 이 페이지의 작은 재생 엔진이 해석해서 그립니다. 화면은 480×270 씬 좌표로 그려 통째로 축소하므로 이동 값은 씬 px 입니다. 모든 카드가 씬 클록 하나를 공유하고, 5초가 지나면 <code>seek(0)</code> 으로 처음부터 다시 재생합니다.</p>
+  <div class="legend">
+    <span><i class="kf"></i>easing 키프레임</span>
+    <span><i class="kf spring"></i>spring</span>
+    <span><i class="kf step"></i>step</span>
+    <span><i class="chip hot">blur</i> GPU 비용 높음 (reduced 에서 생략)</span>
+    <span><i class="chip new">origin</i> 이번에 추가</span>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <button class="btn primary" id="play" type="button" aria-label="일시정지"></button>
+    <div class="clock">
+      <input id="scrub" type="range" min="0" max="5000" step="10" value="0" aria-label="씬 시간">
+      <span class="time" id="time">0000 ms</span>
+    </div>
+    <span class="label">품질</span>
+    <div class="seg" role="group" aria-label="품질">
+      <button type="button" id="q-full" aria-pressed="true">full</button>
+      <button type="button" id="q-reduced" aria-pressed="false">reduced</button>
+    </div>
+    <div class="seg" role="group" aria-label="분류" id="filters"></div>
+  </div>
+</div>
+
+<main class="wrap" id="main"></main>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="d-name">
+    <div class="left">
+      <div class="row"><h3 id="d-name"></h3><button class="btn close" id="d-close" type="button">닫기</button></div>
+      <p class="note" id="d-desc"></p>
+      <div class="stage" id="d-stage"></div>
+      <div class="strip" id="d-strip"></div>
+    </div>
+    <div class="right">
+      <label class="label" for="d-json" id="d-json-label">타임라인 JSON</label>
+      <textarea id="d-json" spellcheck="false"></textarea>
+      <div class="row">
+        <button class="btn primary" id="d-apply" type="button">적용</button>
+        <button class="btn" id="d-copy" type="button">복사</button>
+        <button class="btn" id="d-reset" type="button">원래대로</button>
+        <button class="btn" id="d-future" type="button">v2 로 바꿔 보기</button>
+      </div>
+      <div class="status" id="d-status">값을 고치고 적용하면 패키지와 같은 규칙으로 검증한 뒤 바로 재생합니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const SCENE_MS = 5000, W = 480, H = 270;
+
+  // ───────── 곡선 (Flutter Curves 와 같은 값) ─────────
+  const bez = (u, a, b) => { const m = 1 - u; return 3 * m * m * u * a + 3 * m * u * u * b + u * u * u; };
+  // Flutter Cubic.transformInternal 과 같은 알고리즘 (오차 0.001 이분법) — Dart 엔진과 값이 같아야 한다
+  const cubic = (x1, y1, x2, y2) => (t) => {
+    let start = 0, end = 1;
+    for (;;) {
+      const mid = (start + end) / 2, est = bez(mid, x1, x2);
+      if (Math.abs(t - est) < 0.001) return bez(mid, y1, y2);
+      if (est < t) start = mid; else end = mid;
+    }
+  };
+  const bounce = (t) => {
+    if (t < 1 / 2.75) return 7.5625 * t * t;
+    if (t < 2 / 2.75) { t -= 1.5 / 2.75; return 7.5625 * t * t + 0.75; }
+    if (t < 2.5 / 2.75) { t -= 2.25 / 2.75; return 7.5625 * t * t + 0.9375; }
+    t -= 2.625 / 2.75; return 7.5625 * t * t + 0.984375;
+  };
+  const CURVES = {
+    linear: (t) => t,
+    ease: cubic(0.25, 0.1, 0.25, 1),
+    easeIn: cubic(0.42, 0, 1, 1),
+    easeOut: cubic(0, 0, 0.58, 1),
+    easeInOut: cubic(0.42, 0, 0.58, 1),
+    easeInCubic: cubic(0.55, 0.055, 0.675, 0.19),
+    easeOutCubic: cubic(0.215, 0.61, 0.355, 1),
+    easeInOutCubic: cubic(0.645, 0.045, 0.355, 1),
+    easeInBack: cubic(0.6, -0.28, 0.735, 0.045),
+    easeOutBack: cubic(0.175, 0.885, 0.32, 1.275),
+    fastOutSlowIn: cubic(0.4, 0, 0.2, 1),
+    decelerate: (t) => 1 - (1 - t) * (1 - t),
+    bounceIn: (t) => 1 - bounce(1 - t),
+    bounceOut: bounce,
+    elasticOut: (t) => { const p = 0.4, s = p / 4; return Math.pow(2, -10 * t) * Math.sin((t - s) * 2 * Math.PI / p) + 1; },
+    step: (t) => (t >= 1 ? 1 : 0),
+  };
+
+  // 스프링: Flutter SpringSimulation(0→1, v0=0) 해석해 + settle 규칙(1ms 간격 10초, |x-1|>1e-3 또는 |v|>1e-2 인 마지막 시점 + 1ms)
+  const springCache = new Map();
+  function springSolution(k, c, m) {
+    const d = -1, cmk = c * c - 4 * m * k;
+    if (cmk > 0) {
+      const r1 = (-c - Math.sqrt(cmk)) / (2 * m), r2 = (-c + Math.sqrt(cmk)) / (2 * m), c2 = (0 - r1 * d) / (r2 - r1), c1 = d - c2;
+      return { x: (t) => c1 * Math.exp(r1 * t) + c2 * Math.exp(r2 * t), dx: (t) => c1 * r1 * Math.exp(r1 * t) + c2 * r2 * Math.exp(r2 * t) };
+    }
+    if (cmk < 0) {
+      const w = Math.sqrt(4 * m * k - c * c) / (2 * m), r = -(c / 2 / m), c1 = d, c2 = (0 - r * d) / w;
+      return {
+        x: (t) => Math.exp(r * t) * (c1 * Math.cos(w * t) + c2 * Math.sin(w * t)),
+        dx: (t) => { const p = Math.exp(r * t), co = Math.cos(w * t), si = Math.sin(w * t); return p * (c2 * w * co - c1 * w * si) + r * p * (c2 * si + c1 * co); },
+      };
+    }
+    const r = -c / (2 * m), c1 = d, c2 = 0 - r * d;
+    return { x: (t) => (c1 + c2 * t) * Math.exp(r * t), dx: (t) => { const p = Math.exp(r * t); return r * (c1 + c2 * t) * p + c2 * p; } };
+  }
+  function springCurve({ stiffness, damping, mass = 1 }) {
+    const key = stiffness + '/' + damping + '/' + mass;
+    if (springCache.has(key)) return springCache.get(key);
+    const sol = springSolution(stiffness, damping, mass);
+    let last = -1;
+    for (let i = 0; i <= 10000; i++) { const s = i / 1000; if (Math.abs(sol.x(s)) > 1e-3 || Math.abs(sol.dx(s)) > 1e-2) last = i; }
+    const settle = (last + 1) / 1000;
+    const fn = (u) => 1 + sol.x(u * settle);
+    springCache.set(key, fn);
+    return fn;
+  }
+  const endpoints = (f) => (t) => (t <= 0 ? 0 : t >= 1 ? 1 : f(t)); // Flutter Curve.transform 과 같이 끝점은 정확히 0/1
+  const curveOf = (c) => endpoints(c == null ? CURVES.linear : typeof c === 'string' ? CURVES[c] : springCurve(c.spring));
+
+  // ───────── 스키마 v1 검증 (fromJson / tryFromJson) ─────────
+  const PROPS = ['opacity', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'rotate', 'rotateX', 'rotateY',
+    'skewX', 'skewY', 'clipLeft', 'clipTop', 'clipRight', 'clipBottom', 'tint', 'blur', 'shimmer',
+    'brightness', 'saturate', 'hueRotate', 'translateXRel', 'translateYRel', 'clipCircle', 'feather'];
+  const ORIGINS = { topLeft: [0, 0], topCenter: [.5, 0], topRight: [1, 0], centerLeft: [0, .5], center: [.5, .5],
+    centerRight: [1, .5], bottomLeft: [0, 1], bottomCenter: [.5, 1], bottomRight: [1, 1] };
+  const COLOR_PROPS = ['tint', 'shimmer'];
+  const HOT = ['blur', 'shimmer', 'feather'];
+  const COLOR_MX = ['tint', 'brightness', 'saturate', 'hueRotate']; // 색 행렬 하나로 합쳐지는 속성
+  class MotionFormatError extends Error {}
+  const isInt = (n) => Number.isInteger(n);
+  const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
+
+  function fromJson(j, p = '$') {
+    const fail = (path, msg) => { throw new MotionFormatError(path + ': ' + msg); };
+    if (!j || typeof j !== 'object' || Array.isArray(j)) fail(p, '객체여야 합니다');
+    if (j.v !== 1) fail(p + '.v', isInt(j.v) && j.v > 1 ? '지원하지 않는 스키마 버전 ' + j.v + ' (이 엔진은 1)' : '1 이어야 합니다');
+    if (!isInt(j.durationMs) || j.durationMs <= 0) fail(p + '.durationMs', '양의 정수(ms)여야 합니다');
+    const delayMs = j.delayMs ?? 0;
+    if (!isInt(delayMs) || delayMs < 0) fail(p + '.delayMs', '0 이상 정수여야 합니다');
+    const repeat = j.repeat ?? 'none';
+    if (!['none', 'loop', 'pingpong'].includes(repeat)) fail(p + '.repeat', '"none" | "loop" | "pingpong" 중 하나');
+    let origin = j.origin ?? 'center';
+    if (typeof origin === 'string') { if (!ORIGINS[origin]) fail(p + '.origin', '알 수 없는 기준점 "' + origin + '"'); }
+    else if (!Array.isArray(origin) || origin.length !== 2 || !origin.every(isNum)) fail(p + '.origin', '9방향 이름 또는 [x, y]');
+    if (!Array.isArray(j.tracks)) fail(p + '.tracks', '배열이어야 합니다');
+    const tracks = j.tracks.map((t, i) => {
+      const tp = p + '.tracks[' + i + ']';
+      if (!t || typeof t !== 'object') fail(tp, '객체여야 합니다');
+      if (!PROPS.includes(t.prop)) fail(tp + '.prop', '알 수 없는 속성 "' + t.prop + '"');
+      if (t.color !== undefined) {
+        if (!COLOR_PROPS.includes(t.prop)) fail(tp + '.color', 'tint·shimmer 트랙에서만 허용');
+        if (!/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(t.color)) fail(tp + '.color', '#RRGGBB 또는 #AARRGGBB');
+      }
+      return { prop: t.prop, color: t.color, keys: parseKeys(t.keys, tp + '.keys') };
+    });
+    let channels = [];
+    if (j.channels !== undefined) {
+      if (!Array.isArray(j.channels)) fail(p + '.channels', '배열이어야 합니다');
+      const seen = new Set();
+      channels = j.channels.map((c, i) => {
+        const cp = p + '.channels[' + i + ']';
+        if (!c || typeof c !== 'object' || Array.isArray(c)) fail(cp, '객체여야 합니다');
+        if (typeof c.name !== 'string' || !c.name) fail(cp + '.name', '비어 있지 않은 문자열이어야 합니다');
+        if (seen.has(c.name)) fail(cp + '.name', '이름 "' + c.name + '" 이 겹칩니다');
+        seen.add(c.name);
+        return { name: c.name, keys: parseKeys(c.keys, cp + '.keys') };
+      });
+    }
+    return { delayMs, durationMs: j.durationMs, repeat, origin: typeof origin === 'string' ? ORIGINS[origin] : origin, tracks, channels };
+
+    function parseKeys(keysJson, kpath) {
+      if (!Array.isArray(keysJson) || keysJson.length === 0) fail(kpath, '키프레임이 1개 이상 필요합니다');
+      let prev = -1;
+      return keysJson.map((k, n) => {
+        const kp = kpath + '[' + n + ']';
+        if (!isInt(k?.t) || k.t < 0 || k.t > j.durationMs) fail(kp + '.t', '0~durationMs 정수여야 합니다');
+        if (k.t < prev) fail(kp + '.t', '시간이 오름차순이어야 합니다');
+        prev = k.t;
+        if (!isNum(k.v)) fail(kp + '.v', '숫자여야 합니다');
+        const c = k.curve;
+        if (c !== undefined) {
+          if (typeof c === 'string') { if (!CURVES[c]) fail(kp + '.curve', '알 수 없는 곡선 "' + c + '"'); }
+          else if (!c?.spring || !isNum(c.spring.stiffness) || !isNum(c.spring.damping) || c.spring.stiffness <= 0 || c.spring.damping <= 0
+            || (c.spring.mass !== undefined && !(isNum(c.spring.mass) && c.spring.mass > 0))) fail(kp + '.curve', '{ "spring": { stiffness>0, damping>0, mass? } }');
+        }
+        return { t: k.t, v: k.v, curve: c, fn: curveOf(c) };
+      });
+    }
+  }
+  const tryFromJson = (j) => { try { return fromJson(j); } catch { return null; } };
+
+  // ───────── evaluate(timeline, t) — 순수 함수 ─────────
+  const DEFAULTS = { opacity: 1, scale: 1, scaleX: 1, scaleY: 1, brightness: 1, saturate: 1, clipCircle: 1 };
+  function localTime(tl, t) {
+    const local = t - tl.delayMs;
+    if (local <= 0) return 0;
+    const D = tl.durationMs;
+    if (tl.repeat === 'none') return Math.min(local, D);
+    const c = Math.floor(local / D), m = local - c * D;
+    return tl.repeat === 'pingpong' && c % 2 === 1 ? D - m : m;
+  }
+  function sample(keys, lt) {
+    if (lt <= keys[0].t) return keys[0].v;
+    for (let i = 1; i < keys.length; i++) {
+      const k = keys[i];
+      if (lt < k.t) { const p = keys[i - 1]; return p.v + (k.v - p.v) * k.fn((lt - p.t) / (k.t - p.t)); }
+    }
+    return keys[keys.length - 1].v;
+  }
+  function evaluate(tl, t) {
+    const out = { colors: {} };
+    if (!tl) return out;
+    const lt = localTime(tl, t);
+    for (const tr of tl.tracks) { out[tr.prop] = sample(tr.keys, lt); if (tr.color) out.colors[tr.prop] = tr.color; }
+    out.channels = {};
+    for (const ch of tl.channels) out.channels[ch.name] = sample(ch.keys, lt);
+    return out;
+  }
+  const val = (o, k) => (o[k] ?? DEFAULTS[k] ?? 0);
+  const cssColor = (hex) => {
+    const h = hex.slice(1), a = h.length === 8 ? parseInt(h.slice(0, 2), 16) / 255 : 1, rgb = h.slice(-6);
+    return 'rgba(' + parseInt(rgb.slice(0, 2), 16) + ',' + parseInt(rgb.slice(2, 4), 16) + ',' + parseInt(rgb.slice(4, 6), 16) + ',' + a + ')';
+  };
+
+  const hexRgba = (hex) => {
+    const h = hex.slice(1), a = h.length === 8 ? parseInt(h.slice(0, 2), 16) / 255 : 1, rgb = h.slice(-6);
+    return [parseInt(rgb.slice(0, 2), 16) / 255, parseInt(rgb.slice(2, 4), 16) / 255, parseInt(rgb.slice(4, 6), 16) / 255, a];
+  };
+  // brightness → saturate → hueRotate → tint 를 4×5 행렬(이동 열 0~255) 하나로. 계수는 CSS Filter Effects
+  function colorMatrix(o) {
+    const b = Math.max(0, val(o, 'brightness')), s = Math.max(0, val(o, 'saturate'));
+    const sat = [0.213 + 0.787 * s, 0.715 - 0.715 * s, 0.072 - 0.072 * s, 0.213 - 0.213 * s, 0.715 + 0.285 * s, 0.072 - 0.072 * s,
+      0.213 - 0.213 * s, 0.715 - 0.715 * s, 0.072 + 0.928 * s];
+    const rad = val(o, 'hueRotate') * Math.PI / 180, c = Math.cos(rad), n = Math.sin(rad);
+    const hue = [0.213 + c * 0.787 - n * 0.213, 0.715 - c * 0.715 - n * 0.715, 0.072 - c * 0.072 + n * 0.928,
+      0.213 - c * 0.213 + n * 0.143, 0.715 + c * 0.285 + n * 0.140, 0.072 - c * 0.072 - n * 0.283,
+      0.213 - c * 0.213 - n * 0.787, 0.715 - c * 0.715 + n * 0.715, 0.072 + c * 0.928 + n * 0.072];
+    const m = [];
+    for (let r = 0; r < 3; r++) for (let k = 0; k < 3; k++) {
+      let acc = 0;
+      for (let j = 0; j < 3; j++) acc += hue[r * 3 + j] * sat[j * 3 + k];
+      m[r * 3 + k] = acc * b;
+    }
+    const hasTint = o.tint !== undefined;
+    const tc = hexRgba(o.colors.tint || '#000000');
+    const a = hasTint ? tc[3] * Math.max(0, Math.min(1, o.tint)) : 0, keep = 1 - a;
+    return [m[0] * keep, m[1] * keep, m[2] * keep, 0, tc[0] * 255 * a, m[3] * keep, m[4] * keep, m[5] * keep, 0, tc[1] * 255 * a,
+      m[6] * keep, m[7] * keep, m[8] * keep, 0, tc[2] * 255 * a, 0, 0, 0, 1, 0];
+  }
+  function featherStops(lo, hi, f) {
+    f = Math.max(1e-4, Math.min(1, f));
+    const a0 = Math.max(0, Math.min(1, lo)) * (1 + f) - f, a1 = a0 + f;
+    const b1 = (1 - Math.max(0, Math.min(1, hi))) * (1 + f), b0 = b1 - f;
+    if (a1 <= b0) return [[a0, a1, b0, b1], [0, 1, 1, 0]];
+    if (b1 <= a0) return [[0, 1], [0, 0]];
+    return [[a0, (a0 + b1) / 2, b1], [0, Math.max(0, Math.min(1, (b1 - a0) / (2 * f))), 0]];
+  }
+  const featherCss = (deg, lo, hi, f) => {
+    const [pos, al] = featherStops(lo, hi, f);
+    return 'linear-gradient(' + deg + 'deg,' + pos.map((x, i) => 'rgba(0,0,0,' + al[i] + ') ' + (x * 100) + '%').join(',') + ')';
+  };
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const filterHost = document.createElementNS(svgNS, 'svg');
+  filterHost.setAttribute('width', '0'); filterHost.setAttribute('height', '0');
+  filterHost.style.position = 'absolute';
+  document.body.appendChild(filterHost);
+  let filterSeq = 0;
+  // 요소마다 feColorMatrix 하나. sRGB 에서 계산해야 Flutter 와 같다(기본값 linearRGB)
+  function makeColorFilter() {
+    const id = 'cm' + (++filterSeq);
+    const f = document.createElementNS(svgNS, 'filter');
+    f.setAttribute('id', id); f.setAttribute('color-interpolation-filters', 'sRGB');
+    const fe = document.createElementNS(svgNS, 'feColorMatrix');
+    fe.setAttribute('type', 'matrix');
+    f.appendChild(fe); filterHost.appendChild(f);
+    return { id, fe };
+  }
+  const won = (v) => '₩' + (Math.round(v / 10) * 10).toLocaleString('ko-KR');
+
+  let quality = 'full';
+  // 합성 순서: translate · origin · perspective · rotate · rotateX · rotateY · skew · scale · origin⁻¹ (CSS transform-origin 이 origin 담당)
+  function paint(node, tl, o) {
+    const s = val(o, 'scale');
+    const has = (p) => !!tl && tl.tracks.some((t) => t.prop === p);
+    const rel = has('translateXRel') || has('translateYRel')
+      ? 'translate(' + val(o, 'translateXRel') * 100 + '%,' + val(o, 'translateYRel') * 100 + '%) ' : '';
+    node.el.style.transform = rel +
+      // CSS perspective 는 +z 가 보는 쪽, Flutter(setEntry(3,2,+0.001))는 반대 — 같은 결과를 내려고 rotateX/Y 부호를 뒤집는다
+      'translate(' + val(o, 'translateX') + 'px,' + val(o, 'translateY') + 'px) perspective(1000px) rotate(' + val(o, 'rotate') + 'deg) rotateX(' +
+      -val(o, 'rotateX') + 'deg) rotateY(' + -val(o, 'rotateY') + 'deg) skew(' + val(o, 'skewX') + 'deg,' + val(o, 'skewY') + 'deg) scale(' +
+      s * val(o, 'scaleX') + ',' + s * val(o, 'scaleY') + ')';
+    node.el.style.transformOrigin = tl ? (tl.origin[0] * 100) + '% ' + (tl.origin[1] * 100) + '%' : '50% 50%';
+    node.el.style.opacity = Math.max(0, Math.min(1, val(o, 'opacity')));
+    const full = quality === 'full';
+    // feather 가 맡은 축은 clip-path 대신 그라데이션 마스크가 가린다 (Flutter 와 같은 규칙)
+    const feather = full && has('feather');
+    const fX = feather && (has('clipLeft') || has('clipRight')), fY = feather && (has('clipTop') || has('clipBottom'));
+    const c = (k, off) => (off ? 0 : Math.max(0, Math.min(1, val(o, k))) * 100);
+    node.el.style.clipPath = (o.clipLeft || o.clipTop || o.clipRight || o.clipBottom)
+      ? 'inset(' + c('clipTop', fY) + '% ' + c('clipRight', fX) + '% ' + c('clipBottom', fY) + '% ' + c('clipLeft', fX) + '%)' : '';
+    const masks = [];
+    if (fX) masks.push(featherCss(90, val(o, 'clipLeft'), val(o, 'clipRight'), val(o, 'feather')));
+    if (fY) masks.push(featherCss(180, val(o, 'clipTop'), val(o, 'clipBottom'), val(o, 'feather')));
+    node.el.style.maskImage = masks.join(',');
+    node.el.style.maskComposite = masks.length > 1 ? 'intersect' : '';
+    if (has('clipCircle')) {
+      const cx = tl.origin[0] * node.w, cy = tl.origin[1] * node.h;
+      const far = Math.max(Math.hypot(cx, cy), Math.hypot(node.w - cx, cy), Math.hypot(cx, node.h - cy), Math.hypot(node.w - cx, node.h - cy));
+      node.fx.style.clipPath = 'circle(' + Math.max(0, val(o, 'clipCircle')) * (far + 1) + 'px at ' + cx + 'px ' + cy + 'px)';
+    } else node.fx.style.clipPath = '';
+    // 안쪽부터 blur → 색 행렬 (Flutter 래퍼 순서와 같음)
+    const filters = [];
+    if (full && o.blur) filters.push('blur(' + o.blur + 'px)');
+    if (tl && tl.tracks.some((t) => COLOR_MX.includes(t.prop))) {
+      node.cf ??= makeColorFilter();
+      node.cf.fe.setAttribute('values', colorMatrix(o).map((v, i) => (i % 5 === 4 ? v / 255 : v)).join(' '));
+      filters.push('url(#' + node.cf.id + ')');
+    }
+    node.fx.style.filter = filters.join(' ');
+    node.tint.style.opacity = 0; // tint 는 색 행렬이 맡는다
+    if (node.pv && o.channels && o.channels.price !== undefined) node.pv.textContent = won(o.channels.price);
+    const sh = full && o.shimmer !== undefined;
+    node.shine.hidden = !sh;
+    if (sh) {
+      node.band.style.left = (o.shimmer * 170 - 50) + '%';
+      const col = cssColor(o.colors.shimmer || '#B3FFFFFF');
+      node.band.style.background = 'linear-gradient(90deg, transparent, ' + col + ', transparent)';
+    }
+  }
+
+  // ───────── 데모 정의 (전부 JSON 스키마 모양) ─────────
+  const K = (t, v, curve) => (curve === undefined ? { t, v } : { t, v, curve });
+  const sp = (stiffness, damping) => ({ spring: { stiffness, damping } });
+  const tr = (prop, keys, extra) => ({ prop, ...extra, keys });
+  const TL = (tracks, o = {}) => ({
+    v: 1, delayMs: o.delayMs || 0,
+    durationMs: o.durationMs || Math.max(...tracks.flatMap((x) => x.keys.map((k) => k.t))),
+    repeat: o.repeat || 'none', ...(o.origin ? { origin: o.origin } : {}), tracks,
+    ...(o.channels ? { channels: o.channels } : {}),
+  });
+  const box = (kind, w, h, extra = {}) => ({ kind, w, h, x: (W - w) / 2, y: (H - h) / 2, ...extra });
+
+  const DEMOS = [
+    // 등장
+    { id: 'fadeIn', cat: 'enter', desc: '가장 기본 등장. 0.6초 동안 서서히 나타납니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([tr('opacity', [K(0, 0), K(600, 1, 'easeOut')])]) }] },
+    { id: 'slideIn', cat: 'enter', desc: '화면 왼쪽 밖(씬 x -400px)에서 미끄러져 들어옵니다.',
+      els: [{ ...box('banner', 320, 72, { text: '오늘만 1+1' }), tl: TL([tr('translateX', [K(0, -400), K(700, 0, 'easeOutCubic')]), tr('opacity', [K(0, 0), K(300, 1)])]) }] },
+    { id: 'zoomIn', cat: 'enter', desc: '살짝 작은 크기에서 커지며 나타납니다.',
+      els: [{ ...box('tile', 220, 130, { text: '시즌 한정' }), tl: TL([tr('scale', [K(0, 0.8), K(500, 1, 'easeOut')]), tr('opacity', [K(0, 0), K(500, 1, 'easeOut')])]) }] },
+    { id: 'pop', cat: 'enter', desc: '스프링으로 튀었다가 자리를 잡습니다. damping 이 낮을수록 더 튑니다.',
+      els: [{ ...box('badge', 110, 110, { text: 'NEW' }), tl: TL([tr('scale', [K(0, 0), K(900, 1, sp(260, 11))])]) }] },
+    { id: 'bounceDrop', cat: 'enter', desc: '위에서 떨어져 바닥에서 통통 튑니다.',
+      els: [{ ...box('badge', 110, 110, { text: 'SALE' }), tl: TL([tr('translateY', [K(0, -220), K(900, 0, 'bounceOut')])]) }] },
+    { id: 'flipIn', cat: 'enter', desc: '카드가 세로축으로 뒤집히며 정면을 봅니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([tr('rotateY', [K(0, 90), K(700, 0, 'easeOutCubic')]), tr('opacity', [K(0, 0), K(150, 1)])]) }] },
+    { id: 'wipeIn', cat: 'enter', desc: '왼쪽부터 쓸어 내며 글자가 드러납니다. 텍스트 리빌용입니다.',
+      els: [{ ...box('text', 360, 70, { text: '가을 신메뉴 출시' }), tl: TL([tr('clipRight', [K(0, 1), K(800, 0, 'easeInOutCubic')])]) }] },
+    { id: 'splitOpen', cat: 'enter', desc: '가운데에서 양쪽으로 열립니다. clip 두 개를 동시에 씁니다.',
+      els: [{ ...box('tile', 260, 140, { text: '그랜드 오픈' }), tl: TL([tr('clipLeft', [K(0, 0.5), K(700, 0, 'easeInOutCubic')]), tr('clipRight', [K(0, 0.5), K(700, 0, 'easeInOutCubic')])]) }] },
+    { id: 'blurIn', cat: 'enter', desc: '흐릿한 상태에서 초점이 맞춰집니다. GPU 비용이 높아 reduced 에서는 흐림이 빠집니다.',
+      els: [{ ...box('tile', 240, 140, { text: '포커스' }), tl: TL([tr('blur', [K(0, 14), K(900, 0, 'easeOut')]), tr('opacity', [K(0, 0), K(600, 1)])]) }] },
+    { id: 'spinIn', cat: 'enter', desc: '돌면서 커집니다. 회전과 확대에 같은 스프링을 씁니다.',
+      els: [{ ...box('badge', 110, 110, { text: '1+1' }), tl: TL([tr('rotate', [K(0, -180), K(1000, 0, sp(180, 14))]), tr('scale', [K(0, 0.3), K(1000, 1, sp(180, 14))])]) }] },
+    { id: 'riseUp', cat: 'enter', desc: '기준점을 아래 중앙에 두고 바닥에서 솟아오릅니다.',
+      els: [{ ...box('banner', 300, 80, { text: '이달의 추천', variant: 'green' }), tl: TL([tr('scaleY', [K(0, 0), K(800, 1, sp(300, 14))]), tr('opacity', [K(0, 0), K(100, 1)])], { origin: 'bottomCenter' }) }] },
+    { id: 'doorOpen', cat: 'enter', desc: '기준점을 왼쪽에 두고 문처럼 열립니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([tr('rotateY', [K(0, -90), K(900, 0, 'easeOutCubic')]), tr('opacity', [K(0, 0), K(100, 1)])], { origin: 'centerLeft' }) }] },
+
+    // 반복 주목
+    { id: 'pulse', cat: 'loop', desc: '1.08배로 커졌다 작아지기를 반복합니다.',
+      els: [{ ...box('badge', 110, 110, { text: 'HOT' }), tl: TL([tr('scale', [K(0, 1), K(600, 1.08, 'easeInOut')])], { repeat: 'pingpong' }) }] },
+    { id: 'heartbeat', cat: 'loop', desc: '두 번 뛰고 쉽니다. 한 트랙에 키프레임 여러 개를 둡니다.',
+      els: [{ ...box('badge', 110, 110, { text: '♥ 1위' }), tl: TL([tr('scale', [K(0, 1), K(140, 1.16, 'easeOut'), K(280, 1, 'easeIn'), K(420, 1.1, 'easeOut'), K(600, 1, 'easeIn'), K(1300, 1)])], { repeat: 'loop' }) }] },
+    { id: 'float', cat: 'loop', desc: '위아래로 둥실 떠다닙니다.',
+      els: [{ ...box('tile', 220, 130, { text: '추천 메뉴' }), tl: TL([tr('translateY', [K(0, 0), K(1200, -12, 'easeInOut')])], { repeat: 'pingpong' }) }] },
+    { id: 'shake', cat: 'loop', desc: '좌우로 흔들고 1.3초 쉽니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([tr('translateX', [K(0, 0), K(80, -10), K(160, 10), K(240, -8), K(320, 8), K(400, -4), K(480, 0), K(1800, 0)])], { repeat: 'loop' }) }] },
+    { id: 'blink', cat: 'loop', desc: 'step 곡선으로 중간 값 없이 켜졌다 꺼집니다.',
+      els: [{ ...box('banner', 260, 72, { text: '● 영업중', variant: 'green' }), tl: TL([tr('opacity', [K(0, 1), K(600, 0, 'step'), K(1000, 1, 'step')])], { repeat: 'loop' }) }] },
+    { id: 'breathe', cat: 'loop', desc: '투명도가 천천히 오르내립니다.',
+      els: [{ ...box('text', 360, 70, { text: '지금 주문하세요' }), tl: TL([tr('opacity', [K(0, 0.45), K(1400, 1, 'easeInOut')])], { repeat: 'pingpong' }) }] },
+    { id: 'shimmer', cat: 'loop', desc: '빛줄기가 지나갑니다. reduced 에서는 생략됩니다.',
+      els: [{ ...box('banner', 320, 80, { text: '프리미엄 원두', variant: 'gold' }), tl: TL([tr('shimmer', [K(0, 0), K(1000, 1, 'easeInOut'), K(2200, 1)], { color: '#B3FFF4D6' })], { repeat: 'loop' }) }] },
+    { id: 'saleFlash', cat: 'loop', desc: '빨간 tint 가 번쩍입니다. 색은 트랙의 color 에 둡니다.',
+      els: [{ ...box('banner', 300, 80, { text: '마감 세일 50%' }), tl: TL([tr('tint', [K(0, 0), K(250, 0.65, 'easeOut'), K(900, 0, 'easeIn'), K(1400, 0)], { color: '#FF2D2D' })], { repeat: 'loop' }) }] },
+    { id: 'spin', cat: 'loop', desc: '일정한 속도로 계속 돕니다. 로딩 표시용입니다.',
+      els: [{ ...box('ring', 90, 90), tl: TL([tr('rotate', [K(0, 0), K(1200, 360)])], { repeat: 'loop' }) }] },
+    { id: 'swing', cat: 'loop', desc: '기준점을 위 중앙에 두고 매달린 간판처럼 흔들립니다.',
+      els: [{ ...box('sign', 220, 130, { text: 'OPEN', y: 40 }), tl: TL([tr('rotate', [K(0, -9), K(1100, 9, 'easeInOut')])], { repeat: 'pingpong', origin: 'topCenter' }) }] },
+    { id: 'jelly', cat: 'loop', desc: 'skew 와 scale 을 엇갈려 젤리처럼 출렁입니다.',
+      els: [{ ...box('badge', 110, 110, { text: 'NEW' }), tl: TL([
+        tr('skewX', [K(0, 0), K(120, -14, 'easeOut'), K(300, 9, 'easeInOut'), K(480, -4, 'easeInOut'), K(650, 0, 'easeOut'), K(1800, 0)]),
+        tr('scaleX', [K(0, 1), K(120, 1.15), K(300, 0.92), K(480, 1.04), K(650, 1), K(1800, 1)]),
+        tr('scaleY', [K(0, 1), K(120, 0.88), K(300, 1.08), K(480, 0.97), K(650, 1), K(1800, 1)]),
+      ], { repeat: 'loop', origin: 'bottomCenter' }) }] },
+
+    // 시퀀스 · 여러 요소
+    { id: 'holdAndExit', cat: 'combo', desc: '타임라인 하나로 들어오고, 4초 머물고, 사라집니다.',
+      els: [{ ...box('banner', 320, 72, { text: '오늘만 1+1' }), tl: TL([
+        tr('translateX', [K(0, -400), K(500, 0, 'easeOutCubic'), K(5000, 0)]),
+        tr('opacity', [K(0, 0), K(300, 1), K(4500, 1), K(5000, 0, 'easeIn')]),
+      ]) }] },
+    { id: 'priceSwap', cat: 'combo', desc: '옛 가격이 와이프로 사라지고 새 가격이 드러납니다. 같은 클록을 쓰는 요소 두 개입니다.',
+      els: [
+        { ...box('price', 220, 120, { price: '<s>₩5,900</s>' }), tl: TL([tr('clipLeft', [K(0, 0), K(1500, 0), K(1900, 1, 'easeInCubic')])]) },
+        { ...box('price', 220, 120, { price: '₩4,900' }), tl: TL([tr('clipRight', [K(0, 1), K(1900, 1), K(2300, 0, 'easeOutCubic')])]) },
+      ] },
+    { id: 'stagger', cat: 'combo', desc: '요소마다 delayMs 를 120ms 씩 늘려 순서대로 등장합니다. 그룹 개념 없이 숫자만 씁니다.',
+      els: ['아메리카노|₩4,900', '카페라떼|₩5,400', '바닐라라떼|₩5,900', '콜드브루|₩5,200'].map((s, i) => ({
+        kind: 'row', w: 300, h: 40, x: 90, y: 43 + i * 48, text: s,
+        tl: TL([tr('translateX', [K(0, -40), K(500, 0, 'easeOutCubic')]), tr('opacity', [K(0, 0), K(500, 1, 'easeOut')])], { delayMs: 300 + i * 120 }),
+      })) },
+    { id: 'crossfade', cat: 'combo', desc: '타일 세 개가 같은 클록 위에서 번갈아 나타납니다.',
+      els: [
+        { ...box('tile', 260, 150, { text: 'A · 커피' }), tl: TL([tr('opacity', [K(0, 1), K(1400, 1), K(1800, 0, 'easeInOut'), K(4600, 0), K(5000, 1, 'easeInOut')])]) },
+        { ...box('tile', 260, 150, { text: 'B · 디저트', variant: 'b' }), tl: TL([tr('opacity', [K(0, 0), K(1400, 0), K(1800, 1, 'easeInOut'), K(3000, 1), K(3400, 0, 'easeInOut')])]) },
+        { ...box('tile', 260, 150, { text: 'C · 시즌', variant: 'c' }), tl: TL([tr('opacity', [K(0, 0), K(3000, 0), K(3400, 1, 'easeInOut'), K(4600, 1), K(5000, 0, 'easeInOut')])]) },
+      ] },
+    { id: 'marquee', cat: 'combo', desc: '흐르는 자막입니다. 글자 폭(620px)은 저작하는 쪽이 계산해 넣습니다.',
+      els: [{ kind: 'strip', w: 620, h: 50, x: 0, y: 110, text: '가을 신메뉴 출시 · 아메리카노 ₩4,900 · 오늘만 1+1 ·',
+        tl: TL([tr('translateX', [K(0, 480), K(5000, -620)])], { repeat: 'loop' }) }] },
+    { id: 'kenBurns', cat: 'combo', desc: '사진을 천천히 확대하며 이동합니다. origin 을 [0.3, 0.4] 비율로 줍니다.',
+      els: [{ kind: 'photo', w: 480, h: 270, x: 0, y: 0, tl: TL([
+        tr('scale', [K(0, 1), K(5000, 1.18, 'easeInOut')]), tr('translateX', [K(0, 0), K(5000, -24, 'easeInOut')]),
+      ], { origin: [0.3, 0.4] }) }] },
+    { id: 'cardFlip', cat: 'combo', desc: '앞면과 뒷면 두 요소를 반대로 돌리고, 90° 시점에 step 으로 보이는 면을 바꿉니다.',
+      els: [
+        { ...box('price', 220, 120), tl: TL([
+          tr('rotateY', [K(0, 0), K(1000, 0), K(1600, 180, 'easeInOutCubic'), K(3500, 180), K(4100, 360, 'easeInOutCubic')]),
+          tr('opacity', [K(0, 1), K(1300, 0, 'step'), K(3800, 1, 'step')]),
+        ]) },
+        { ...box('banner', 220, 120, { text: '회원 10% 할인', variant: 'red' }), tl: TL([
+          tr('rotateY', [K(0, -180), K(1000, -180), K(1600, 0, 'easeInOutCubic'), K(3500, 0), K(4100, 180, 'easeInOutCubic')]),
+          tr('opacity', [K(0, 0), K(1300, 1, 'step'), K(3800, 0, 'step')]),
+        ]) },
+      ] },
+    // 색 행렬 · 상대 이동 · 원형 clip · feather · 값 채널
+    { id: 'soldOut', cat: 'extra', desc: 'saturate 1→0. 품절 상품을 흑백으로 바꿨다가 되돌립니다.',
+      els: [{ ...box('tile', 220, 130, { text: '품절' }), tl: TL([tr('saturate', [K(0, 1), K(600, 1), K(1200, 0, 'easeInOut'), K(3000, 0), K(3600, 1, 'easeInOut')])], { repeat: 'loop' }) }] },
+    { id: 'flash', cat: 'extra', desc: 'brightness 1→1.7→1. 타임세일 배너가 번쩍입니다.',
+      els: [{ ...box('banner', 320, 72, { text: '타임세일 50%', variant: 'red' }), tl: TL([tr('brightness', [K(0, 1), K(200, 1.7, 'easeOut'), K(700, 1, 'easeIn'), K(1600, 1)])], { repeat: 'loop' }) }] },
+    { id: 'hueCycle', cat: 'extra', desc: 'hueRotate 0→360°. 배너 색이 천천히 돕니다.',
+      els: [{ ...box('banner', 320, 72, { text: 'NEW ARRIVAL', variant: 'red' }), tl: TL([tr('hueRotate', [K(0, 0), K(6000, 360)])], { repeat: 'loop' }) }] },
+    { id: 'grayTint', cat: 'extra', desc: '흑백(saturate 0) 위에 붉은 tint 를 겹칩니다. 색 행렬 순서 brightness → saturate → hueRotate → tint 확인용입니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([
+        tr('saturate', [K(0, 0)]), tr('brightness', [K(0, 1.2)]),
+        tr('tint', [K(0, 0), K(800, 0.5, 'easeOut'), K(1600, 0, 'easeIn')], { color: '#FF2D2D' }),
+      ], { repeat: 'loop' }) }] },
+    { id: 'slideInRel', cat: 'extra', desc: 'translateXRel -1→0. 요소 크기와 상관없이 자기 너비만큼 밀려 들어옵니다.',
+      els: [{ ...box('banner', 320, 72, { text: '오늘만 1+1' }), tl: TL([tr('translateXRel', [K(0, -1), K(700, 0, 'easeOutCubic')]), tr('opacity', [K(0, 0), K(300, 1)])]) }] },
+    { id: 'irisIn', cat: 'extra', desc: 'clipCircle 0→1→0. 가운데에서 원으로 열렸다가 닫힙니다.',
+      els: [{ ...box('tile', 220, 130, { text: '쿠폰 10%' }), tl: TL([tr('clipCircle', [K(0, 0), K(700, 1, 'easeOutCubic'), K(2600, 1), K(3200, 0, 'easeInCubic')])], { durationMs: 3800, repeat: 'loop' }) }] },
+    { id: 'irisCorner', cat: 'extra', desc: 'origin topLeft 의 clipCircle. 왼쪽 위 모서리에서 퍼져 나옵니다.',
+      els: [{ ...box('tile', 220, 130, { text: '쿠폰 10%' }), tl: TL([tr('clipCircle', [K(0, 0), K(900, 1, 'easeOutCubic'), K(2600, 1), K(3200, 0, 'easeInCubic')])], { durationMs: 3800, repeat: 'loop', origin: 'topLeft' }) }] },
+    { id: 'featherWipe', cat: 'extra', desc: 'clipRight 와이프에 feather 0.3. 경계가 부드럽게 번집니다. reduced 에서는 일반 와이프입니다.',
+      els: [{ ...box('text', 360, 70, { text: '가을 신메뉴 출시' }), tl: TL([
+        tr('clipRight', [K(0, 1), K(1400, 0, 'easeInOutCubic'), K(2600, 0), K(3400, 1, 'easeInOutCubic')]), tr('feather', [K(0, 0.3)]),
+      ], { durationMs: 4000, repeat: 'loop' }) }] },
+    { id: 'featherBox', cat: 'extra', desc: '가로·세로 clip 에 함께 feather 를 줍니다. 축마다 마스크가 하나씩 생깁니다.',
+      els: [{ ...box('tile', 220, 130, { text: '시즌 한정' }), tl: TL([
+        tr('clipTop', [K(0, 1), K(1000, 0, 'easeOutCubic')]), tr('clipLeft', [K(0, 0.5), K(1000, 0, 'easeOutCubic')]), tr('feather', [K(0, 0.25)]),
+      ], { durationMs: 2000, repeat: 'loop' }) }] },
+    { id: 'priceDrop', cat: 'extra', desc: '값 채널 price 4900→3900. Motion.builder 가 매 프레임 숫자를 받아 가격을 다시 그립니다.',
+      els: [{ ...box('price', 220, 120), tl: TL([
+        tr('scale', [K(0, 1), K(1500, 1), K(1700, 1.08, 'easeOut'), K(2000, 1, 'easeIn'), K(4000, 1)]),
+      ], { durationMs: 4000, repeat: 'loop', channels: [{ name: 'price', keys: [K(0, 4900), K(600, 4900), K(1600, 3900, 'easeOutCubic'), K(4000, 3900)] }] }) }] },
+  ];
+  const CATS = [
+    { id: 'enter', name: '등장', note: '퇴장은 같은 키프레임을 거꾸로 두면 됩니다.' },
+    { id: 'loop', name: '반복 주목', note: 'repeat 를 loop 나 pingpong 으로 둡니다.' },
+    { id: 'combo', name: '시퀀스 · 여러 요소', note: '요소마다 자기 타임라인을 갖고, 씬 클록 하나가 모두를 함께 움직입니다.' },
+    { id: 'extra', name: '색 · clip · 값 채널', note: '색 행렬, 상대 이동, 원형 clip, feather, 값 채널입니다.' },
+  ];
+  for (const d of DEMOS) { d.original = d.els.map((e) => e.tl); d.parsed = d.els.map((e) => fromJson(e.tl)); }
+
+  // ───────── 화면 구성 ─────────
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function content(e) {
+    switch (e.kind) {
+      case 'price': return '<span class="pn">아메리카노</span><span class="pv">' + (e.price || '₩4,900') + '</span>';
+      case 'row': { const [a, b] = e.text.split('|'); return '<i></i><span>' + esc(a) + '</span><span>' + esc(b) + '</span>'; }
+      case 'sign': return '<div class="board">' + esc(e.text) + '</div>';
+      case 'photo': case 'ring': return '';
+      default: return esc(e.text || '');
+    }
+  }
+  function makeStage(demo, host) {
+    host.innerHTML = '';
+    const canvas = document.createElement('div');
+    canvas.className = 'canvas';
+    const nodes = demo.els.map((e) => {
+      const ghost = document.createElement('div');
+      ghost.className = 'ghost';
+      Object.assign(ghost.style, { left: e.x + 'px', top: e.y + 'px', width: e.w + 'px', height: e.h + 'px' });
+      if (e.kind !== 'photo' && e.kind !== 'strip') canvas.appendChild(ghost);
+      const el = document.createElement('div');
+      el.className = 'el';
+      Object.assign(el.style, { left: e.x + 'px', top: e.y + 'px', width: e.w + 'px', height: e.h + 'px' });
+      const fx = document.createElement('div');
+      fx.className = 'fx k-' + e.kind + (e.variant ? ' ' + e.variant : '');
+      fx.innerHTML = content(e) + '<i class="tint"></i><i class="shine" hidden><b></b></i>';
+      el.appendChild(fx);
+      canvas.appendChild(el);
+      return { el, fx, w: e.w, h: e.h, pv: fx.querySelector('.pv'), tint: fx.querySelector('.tint'), shine: fx.querySelector('.shine'), band: fx.querySelector('.shine b') };
+    });
+    host.appendChild(canvas);
+    new ResizeObserver(([en]) => { canvas.style.transform = 'scale(' + en.contentRect.width / W + ')'; }).observe(host);
+    return { demo, nodes, update(t) { demo.parsed.forEach((tl, i) => paint(nodes[i], tl, evaluate(tl, t))); } };
+  }
+  function makeStrip(demo, host, maxRows) {
+    host.innerHTML = '';
+    const rows = [];
+    demo.parsed.forEach((tl, i) => {
+      if (!tl) return;
+      for (const t of tl.tracks) rows.push({ tl, t, label: (demo.els.length > 1 ? (i + 1) + '·' : '') + t.prop });
+    });
+    const shown = maxRows ? rows.slice(0, maxRows) : rows;
+    const phs = shown.map((r) => {
+      const row = document.createElement('div');
+      row.className = 'trk';
+      const kfs = r.t.keys.map((k) => {
+        const cls = k.curve && typeof k.curve === 'object' ? 'spring' : k.curve === 'step' ? 'step' : '';
+        return '<i class="kf ' + cls + '" style="left:' + (k.t / r.tl.durationMs * 100) + '%"></i>';
+      }).join('');
+      row.innerHTML = '<span class="nm" title="' + r.label + '">' + r.label + '</span><div class="rail">' + kfs + '<i class="ph"></i></div>';
+      host.appendChild(row);
+      return { ph: row.querySelector('.ph'), tl: r.tl };
+    });
+    if (maxRows && rows.length > maxRows) {
+      const m = document.createElement('div'); m.className = 'more'; m.textContent = '+ 트랙 ' + (rows.length - maxRows) + '개 더';
+      host.appendChild(m);
+    }
+    return { update(t) { for (const p of phs) p.ph.style.left = (localTime(p.tl, t) / p.tl.durationMs * 100) + '%'; } };
+  }
+
+  const main = document.getElementById('main');
+  const live = [];
+  const cardsByCat = {};
+  for (const cat of CATS) {
+    const sec = document.createElement('section');
+    sec.dataset.cat = cat.id;
+    const list = DEMOS.filter((d) => d.cat === cat.id);
+    sec.innerHTML = '<h2>' + cat.name + ' <span class="count">' + list.length + '</span></h2><p>' + cat.note + '</p><div class="grid"></div>';
+    const grid = sec.querySelector('.grid');
+    for (const d of list) {
+      const card = document.createElement('article');
+      card.className = 'card';
+      const props = [...new Set(d.els.flatMap((e) => e.tl.tracks.map((t) => t.prop)))];
+      const usesOrigin = d.els.some((e) => e.tl.origin);
+      card.innerHTML =
+        '<div class="stage"></div><div class="meta"><div class="head"><span class="name">' + d.id + '</span>' +
+        '<button class="btn open" type="button">JSON 열기</button></div><p class="desc">' + d.desc + '</p><div class="chips">' +
+        props.map((p) => '<span class="chip' + (HOT.includes(p) ? ' hot' : p.startsWith('skew') ? ' new' : '') + '">' + p + '</span>').join('') +
+        (usesOrigin ? '<span class="chip new">origin</span>' : '') +
+        (d.els.length > 1 ? '<span class="chip">요소 ' + d.els.length + '개</span>' : '') +
+        '</div><div class="strip"></div></div>';
+      grid.appendChild(card);
+      d.stage = makeStage(d, card.querySelector('.stage'));
+      d.strip = makeStrip(d, card.querySelector('.strip'), 4);
+      live.push(d.stage, d.strip);
+      card.querySelector('.open').addEventListener('click', () => openDetail(d));
+    }
+    cardsByCat[cat.id] = sec;
+    main.appendChild(sec);
+  }
+
+  // 분류 필터
+  const filters = document.getElementById('filters');
+  [{ id: 'all', name: '전체' }, ...CATS].forEach((c, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = c.name; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.addEventListener('click', () => {
+      filters.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+      for (const id in cardsByCat) cardsByCat[id].hidden = c.id !== 'all' && c.id !== id;
+    });
+    filters.appendChild(b);
+  });
+
+  // ───────── 씬 클록 (공유 컨트롤러) ─────────
+  const playBtn = document.getElementById('play'), scrub = document.getElementById('scrub'), timeEl = document.getElementById('time');
+  const ICON_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+  const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let playing = !reduceMotion, clock = reduceMotion ? 1200 : 0, last = performance.now();
+  const setPlaying = (p) => {
+    playing = p;
+    playBtn.innerHTML = (p ? ICON_PAUSE + '일시정지' : ICON_PLAY + '재생');
+    playBtn.setAttribute('aria-label', p ? '일시정지' : '재생');
+  };
+  setPlaying(playing);
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  scrub.addEventListener('input', () => { setPlaying(false); clock = +scrub.value; });
+  const setQuality = (q) => {
+    quality = q;
+    document.getElementById('q-full').setAttribute('aria-pressed', q === 'full');
+    document.getElementById('q-reduced').setAttribute('aria-pressed', q === 'reduced');
+  };
+  document.getElementById('q-full').addEventListener('click', () => setQuality('full'));
+  document.getElementById('q-reduced').addEventListener('click', () => setQuality('reduced'));
+
+  function frame(now) {
+    if (playing) clock = (clock + (now - last)) % SCENE_MS; // 씬 끝 → seek(0)
+    last = now;
+    scrub.value = clock;
+    timeEl.textContent = String(Math.floor(clock)).padStart(4, '0') + ' ms';
+    for (const x of live) x.update(clock);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ───────── 상세 패널: JSON 편집 → fromJson 검증 → 재생 ─────────
+  const overlay = document.getElementById('overlay'), ta = document.getElementById('d-json'), statusEl = document.getElementById('d-status');
+  let current = null, dStage = null, dStrip = null, lastFocus = null;
+  const toText = (d) => JSON.stringify(d.els.length > 1 ? d.els.map((e) => e.tl) : d.els[0].tl, null, 2);
+  const setStatus = (msg, kind) => { statusEl.textContent = msg; statusEl.className = 'status' + (kind ? ' ' + kind : ''); };
+  function mountDetail() {
+    const i1 = live.indexOf(dStage); if (i1 >= 0) live.splice(i1, 1);
+    const i2 = live.indexOf(dStrip); if (i2 >= 0) live.splice(i2, 1);
+    dStage = makeStage(current, document.getElementById('d-stage'));
+    dStrip = makeStrip(current, document.getElementById('d-strip'));
+    live.push(dStage, dStrip);
+  }
+  function openDetail(d) {
+    current = d; lastFocus = document.activeElement;
+    document.getElementById('d-name').textContent = d.id;
+    document.getElementById('d-desc').textContent = d.desc;
+    document.getElementById('d-json-label').textContent = d.els.length > 1 ? '타임라인 JSON (요소 ' + d.els.length + '개, 요소마다 하나)' : '타임라인 JSON';
+    ta.value = toText(d);
+    setStatus('값을 고치고 적용하면 패키지와 같은 규칙으로 검증한 뒤 바로 재생합니다.');
+    mountDetail();
+    overlay.hidden = false;
+    ta.focus();
+  }
+  function closeDetail() {
+    overlay.hidden = true;
+    [dStage, dStrip].forEach((x) => { const i = live.indexOf(x); if (i >= 0) live.splice(i, 1); });
+    lastFocus?.focus();
+  }
+  function rebuildCard(d) {
+    d.stage = (() => { const i = live.indexOf(d.stage); const s = makeStage(d, d.stage.nodes[0].el.closest('.stage')); live[i] = s; return s; })();
+    const stripHost = d.stage.nodes[0].el.closest('.card').querySelector('.strip');
+    const i = live.indexOf(d.strip); d.strip = makeStrip(d, stripHost, 4); live[i] = d.strip;
+  }
+  function apply(text) {
+    let raw;
+    try { raw = JSON.parse(text); } catch (e) { setStatus('JSON 문법 오류: ' + e.message, 'err'); return; }
+    const list = current.els.length > 1 ? raw : [raw];
+    if (!Array.isArray(list) || list.length !== current.els.length) { setStatus('$: 요소 ' + current.els.length + '개 분량의 배열이어야 합니다', 'err'); return; }
+    const errors = [];
+    const parsed = list.map((j, i) => {
+      try { return fromJson(j, current.els.length > 1 ? '$[' + i + ']' : '$'); }
+      catch (e) { errors.push(e.message); return tryFromJson(j); }
+    });
+    current.els.forEach((e, i) => { e.tl = list[i]; });
+    current.parsed = parsed;
+    mountDetail(); rebuildCard(current);
+    if (errors.length) setStatus('fromJson 오류 → ' + errors.join(' / ') + '. 플레이어에서는 tryFromJson 이 null 을 돌려주므로 이 요소는 모션 없이 그려집니다.', 'err');
+    else setStatus('적용했습니다. 검증을 통과했고 지금 재생 중입니다.', 'ok');
+  }
+  document.getElementById('d-apply').addEventListener('click', () => apply(ta.value));
+  document.getElementById('d-reset').addEventListener('click', () => {
+    current.els.forEach((e, i) => { e.tl = current.original[i]; });
+    ta.value = toText(current); apply(ta.value);
+    setStatus('원래 값으로 되돌렸습니다.', 'ok');
+  });
+  document.getElementById('d-future').addEventListener('click', () => {
+    let list;
+    try { const raw = JSON.parse(ta.value); list = current.els.length > 1 ? raw : [raw]; list[0].v = 2; }
+    catch { setStatus('먼저 JSON 문법 오류를 고쳐 주세요.', 'err'); return; }
+    ta.value = JSON.stringify(current.els.length > 1 ? list : list[0], null, 2);
+    apply(ta.value);
+  });
+  document.getElementById('d-copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(ta.value); setStatus('JSON 을 복사했습니다.', 'ok'); }
+    catch { ta.select(); setStatus('복사가 막혀 있어 텍스트를 선택해 두었습니다. Ctrl/⌘+C 로 복사하세요.'); }
+  });
+  document.getElementById('d-close').addEventListener('click', closeDetail);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDetail(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeDetail(); });
+
+  // 자가 점검: 엔진 동작 일부를 페이지 로드 시 확인 (콘솔)
+  const sc = springCurve({ stiffness: 260, damping: 11 });
+  console.assert(Math.abs(sc(0.999) - 1) < 2e-3 && Math.abs(sc(0)) < 1e-12, 'spring 경계값');
+  const tl = fromJson(DEMOS[0].els[0].tl);
+  console.assert(evaluate(tl, 600).opacity === 1 && evaluate(tl, 0).opacity === 0, 'fadeIn 경계값');
+  console.assert(tryFromJson({ v: 2, durationMs: 1, tracks: [] }) === null, '미래 버전 → null');
+  console.assert(localTime({ delayMs: 100, durationMs: 1000, repeat: 'pingpong' }, 1600) === 500, 'pingpong 역방향');
+  // Dart 엔진과 값 비교용 fixture 를 뽑을 수 있게 노출 (test/fixtures/demo_timelines.json)
+  window.keyframeMotionEngine = { DEMOS, fromJson, evaluate, PROPS, colorMatrix, COLOR_MX };
+})();
+</script>

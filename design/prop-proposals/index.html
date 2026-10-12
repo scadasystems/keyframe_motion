@@ -1,0 +1,505 @@
+<title>keyframe_motion 효과 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 상단 고정 클록 바 + 요약 표 + 속성별 섹션(설명 · 사이니지 화면 비교 · JSON). 토큰은 design/motion-demo 와 같다 */
+:root {
+  --bg: #EDEFF2;
+  --surface: #FFFFFF;
+  --ink: #15181C;
+  --muted: #5A626D;
+  --line: #D3D8DF;
+  --accent: #C2410C;
+  --accent-soft: #FDE7D9;
+  --hot: #B91C1C;
+  --hot-soft: #FBE2E2;
+  --ok: #15803D;
+  --ok-soft: #DCF3E3;
+  --screen: #0D1015;
+  --screen-ink: #F3F5F8;
+  --rail: #E3E7EC;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1216; --surface: #171B21; --ink: #E6E9ED; --muted: #98A1AC; --line: #2A3038;
+    --accent: #FB923C; --accent-soft: #3A2414; --hot: #F87171; --hot-soft: #3B1A1A;
+    --ok: #4ADE80; --ok-soft: #14301E;
+    --screen: #05070A; --screen-ink: #F3F5F8; --rail: #232930; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1216; --surface: #171B21; --ink: #E6E9ED; --muted: #98A1AC; --line: #2A3038;
+  --accent: #FB923C; --accent-soft: #3A2414; --hot: #F87171; --hot-soft: #3B1A1A;
+  --ok: #4ADE80; --ok-soft: #14301E;
+  --screen: #05070A; --screen-ink: #F3F5F8; --rail: #232930; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.55; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; }
+header.top { padding-block: 32px 18px; display: grid; gap: 8px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+header.top p { margin: 0; color: var(--muted); max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-block: 10px; }
+.btn { font: inherit; font-weight: 500; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 6px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--muted); }
+.btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.clock { display: flex; align-items: center; gap: 10px; flex: 1 1 300px; min-width: 0; }
+.clock input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; min-width: 9ch; text-align: right; }
+.label { font-size: 12px; color: var(--muted); }
+
+main { padding-block: 20px 56px; display: grid; gap: 40px; }
+
+/* 요약 표 */
+.summary { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.summary table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.summary th, .summary td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.summary tr:last-child td { border-bottom: 0; }
+.summary th { font-size: 12px; font-weight: 500; color: var(--muted); }
+.summary td a { color: var(--ink); font-family: var(--font-mono); font-weight: 500; text-decoration: none; border-bottom: 1px dashed var(--muted); }
+.summary td a:hover { color: var(--accent); border-color: var(--accent); }
+
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 11px; padding: 1px 7px; border-radius: 4px; background: var(--rail); color: var(--muted); white-space: nowrap; }
+.chip.low { background: var(--ok-soft); color: var(--ok); }
+.chip.mid { background: var(--accent-soft); color: var(--accent); }
+.chip.high { background: var(--hot-soft); color: var(--hot); }
+.chip.pick { background: var(--ink); color: var(--bg); }
+
+/* 속성 섹션 */
+section.prop { display: grid; gap: 14px; scroll-margin-top: 72px; }
+.prop-head { display: grid; gap: 6px; }
+.prop-head h2 { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; font-size: 20px; font-weight: 600; }
+.prop-head h2 .rank { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-weight: 400; }
+.prop-head .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.prop-head p { margin: 0; color: var(--muted); max-width: 72ch; }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+figcaption { padding: 10px 14px 12px; display: grid; gap: 2px; }
+figcaption b { font-family: var(--font-mono); font-weight: 500; font-size: 13px; }
+figcaption span { font-size: 12.5px; color: var(--muted); }
+.impl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 760px) { .impl { grid-template-columns: minmax(0, 1fr); } }
+.impl > div { min-width: 0; display: grid; gap: 6px; align-content: start; }
+.impl h3 { margin: 0; font-size: 12px; font-weight: 500; color: var(--muted); }
+.impl p { margin: 0; font-size: 13px; }
+pre { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
+
+/* 사이니지 화면: 480×270 씬 좌표 캔버스를 폭에 맞춰 축소 — 플레이어와 같은 방식 */
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--screen); overflow: hidden; }
+.canvas { position: absolute; left: 0; top: 0; width: 480px; height: 270px; transform-origin: 0 0; overflow: hidden; color: var(--screen-ink);
+  background: radial-gradient(120% 90% at 20% 0%, #1B2230 0%, transparent 60%), var(--screen); font-family: var(--font-body); }
+.el { position: absolute; will-change: transform, opacity, filter; }
+
+/* 씬 안 요소 (씬 안은 사이니지 화면이므로 테마와 무관한 고정 색) */
+.product { background: #FFFFFF; color: #14213D; border-radius: 12px; padding: 12px; display: grid; gap: 4px; box-shadow: 0 6px 18px rgb(0 0 0 / .35); }
+.product .img { height: 78px; border-radius: 8px; background: linear-gradient(135deg, #FFF1DA, #FFD9A0); display: grid; place-items: center; font-size: 30px; }
+.product .name { font-size: 13px; }
+.product .price { display: flex; align-items: baseline; gap: 6px; }
+.product .now { color: #E63946; font-weight: 800; font-size: 22px; font-variant-numeric: tabular-nums; }
+.product .was { color: #8A94A6; font-size: 12px; text-decoration: line-through; font-variant-numeric: tabular-nums; }
+.stamp { border: 4px solid #E63946; color: #E63946; font-weight: 900; font-size: 30px; padding: 2px 14px; border-radius: 8px; letter-spacing: .1em; background: rgb(255 255 255 / .85); }
+.banner { border-radius: 12px; display: grid; place-items: center; font-weight: 800; letter-spacing: .02em; }
+.lane { position: absolute; left: 0; height: 52px; border-radius: 0 8px 8px 0; display: flex; align-items: center; padding-left: 12px; font-weight: 700; font-size: 14px; color: #14213D; }
+.window { position: absolute; left: 20px; right: 20px; top: 40px; bottom: 20px; overflow: hidden; border: 1px dashed rgb(255 255 255 / .25); border-radius: 6px; }
+.tag { position: absolute; left: 20px; top: 12px; font-family: var(--font-mono); font-size: 12px; color: rgb(255 255 255 / .6); }
+.coupon { background: linear-gradient(135deg, #FCA311, #E63946); color: #FFFFFF; border-radius: 16px; display: grid; place-items: center; text-align: center; }
+.coupon b { font-size: 40px; line-height: 1; }
+.coupon span { font-size: 14px; opacity: .9; }
+.bar-track { position: absolute; left: 40px; right: 40px; height: 10px; border-radius: 5px; background: rgb(255 255 255 / .15); overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, #FCA311, #E63946); border-radius: 5px; transform-origin: 0 50%; }
+.countdown { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 34px; font-weight: 500; }
+
+footer { border-top: 1px solid var(--line); padding-block: 20px 40px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+footer h2 { margin: 0; font-size: 15px; color: var(--ink); font-weight: 600; }
+footer ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 80ch; }
+
+@media (prefers-reduced-motion: reduce) { .el { will-change: auto; } }
+</style>
+
+<header class="wrap top">
+  <div class="eyebrow">keyframe_motion · 효과 비교</div>
+  <h1>색 · 상대 이동 · 원형 clip · 값 채널 · feather</h1>
+  <p>다섯 가지 효과를 사이니지 화면에서 재생합니다. 비교가 필요한 효과는 기본 방식과 나란히 보여 줍니다. 화면은 모두 같은 시계로 움직입니다.</p>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <button class="btn primary" id="play" type="button" aria-label="일시정지">일시정지</button>
+    <button class="btn" id="restart" type="button">처음부터</button>
+    <div class="clock">
+      <span class="label">시간</span>
+      <input id="scrub" type="range" min="0" max="6000" step="10" value="0" aria-label="시간 이동">
+      <span class="time" id="time">0 ms</span>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="summary">
+    <table>
+      <thead><tr><th>속성</th><th>쓰임</th><th>비용</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#color">brightness · saturate · hueRotate</a></td><td>품절 흑백, 강조 번쩍임, 색상 순환</td><td><span class="chip low">거의 없음</span></td></tr>
+        <tr><td><a href="#relative">translateXRel · translateYRel</a></td><td>요소 크기와 무관하게 "자기 너비만큼" 밀려 들어오기</td><td><span class="chip low">낮음</span></td></tr>
+        <tr><td><a href="#circle">clipCircle</a></td><td>원형으로 열리고 닫히는 아이리스 와이프</td><td><span class="chip mid">중간</span></td></tr>
+        <tr><td><a href="#value">값 채널 (Motion.builder)</a></td><td>가격 숫자 바뀌기, 진행 막대, 카운트다운</td><td><span class="chip">child 가 정함</span></td></tr>
+        <tr><td><a href="#feather">feather</a></td><td>clip 와이프 경계를 부드럽게</td><td><span class="chip high">높음</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 색 행렬 -->
+  <section class="prop" id="color">
+    <div class="prop-head">
+      <h2>brightness · saturate · hueRotate</h2>
+      <div class="chips"><span class="chip low">비용 거의 없음</span><span class="chip">ColorFiltered 색 행렬</span></div>
+      <p>밝기·채도·색상을 바꿉니다. tint 와 함께 <code>ColorFiltered</code> 하나에 색 행렬로 합쳐지므로 레이어가 늘지 않습니다. 계산식이 CSS <code>filter</code> 와 같아서 웹 미리보기와 단말 결과가 같습니다.</p>
+    </div>
+    <div class="compare">
+      <figure>
+        <div class="stage" data-demo="soldout"></div>
+        <figcaption><b>saturate 1 → 0</b><span>품절 상품을 흑백으로 바꾸고 도장을 찍습니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="flash"></div>
+        <figcaption><b>brightness 1 → 1.7 → 1</b><span>타임세일 배너가 주기적으로 번쩍입니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="hue"></div>
+        <figcaption><b>hueRotate 0 → 360°</b><span>신상품 배너의 색이 천천히 돕니다.</span></figcaption>
+      </figure>
+    </div>
+    <div class="impl">
+      <div>
+        <h3>JSON</h3>
+<pre>{ "prop": "saturate", "keys": [
+  { "t": 0, "v": 1 },
+  { "t": 1200, "v": 0, "curve": "easeInOut" }
+]}</pre>
+      </div>
+      <div>
+        <h3>참고</h3>
+        <p>tint 와 함께 쓰면 행렬 하나로 곱해 합칩니다. <code>reduced</code> 품질에서도 유지합니다. 기본값은 brightness 1, saturate 1, hueRotate 0 입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 상대 이동 -->
+  <section class="prop" id="relative">
+    <div class="prop-head">
+      <h2>translateXRel · translateYRel</h2>
+      <div class="chips"><span class="chip low">비용 낮음</span><span class="chip">FractionalTranslation</span></div>
+      <p>이동 거리를 px 이 아니라 요소 크기의 비율로 줍니다. px 이동은 거리가 고정이라 요소 너비가 다르면 느낌이 달라집니다. 아래 두 화면은 너비가 다른 막대 3개가 점선 창 왼쪽에서 들어오는 장면입니다.</p>
+    </div>
+    <div class="compare">
+      <figure>
+        <div class="stage" data-demo="relFixed"></div>
+        <figcaption><b>translateX -120 (px)</b><span>넓은 막대는 처음부터 절반 넘게 보이고, 좁은 막대는 한참 멀리서 출발합니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="relRel"></div>
+        <figcaption><b>translateXRel -1 (비율)</b><span>모두 정확히 창 밖에서 출발해 같은 느낌으로 들어옵니다.</span></figcaption>
+      </figure>
+    </div>
+    <div class="impl">
+      <div>
+        <h3>JSON</h3>
+<pre>{ "prop": "translateXRel", "keys": [
+  { "t": 0, "v": -1 },
+  { "t": 700, "v": 0, "curve": "easeOutCubic" }
+]}</pre>
+      </div>
+      <div>
+        <h3>참고</h3>
+        <p>px 이동과 함께 쓰면 더해집니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 원형 클립 -->
+  <section class="prop" id="circle">
+    <div class="prop-head">
+      <h2>clipCircle</h2>
+      <div class="chips"><span class="chip mid">비용 중간</span><span class="chip">ClipOval (원)</span></div>
+      <p>원이 커지며 요소가 드러납니다. 1 이면 요소 전체가 보입니다. 원의 중심은 타임라인의 <code>origin</code> 을 따릅니다. 사각 clip 보다 비싸지만 blur·shimmer 보다는 쌉니다.</p>
+    </div>
+    <div class="compare">
+      <figure>
+        <div class="stage" data-demo="circleCenter"></div>
+        <figcaption><b>origin center</b><span>쿠폰이 가운데에서 열렸다가 다시 닫힙니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="circleCorner"></div>
+        <figcaption><b>origin topLeft</b><span>왼쪽 위 모서리에서 퍼져 나옵니다.</span></figcaption>
+      </figure>
+    </div>
+    <div class="impl">
+      <div>
+        <h3>JSON</h3>
+<pre>{ "v": 1, "durationMs": 3800, "origin": "center",
+  "tracks": [{ "prop": "clipCircle", "keys": [
+    { "t": 0, "v": 0 },
+    { "t": 700, "v": 1, "curve": "easeOutCubic" },
+    { "t": 2600, "v": 1 },
+    { "t": 3200, "v": 0, "curve": "easeInCubic" }
+  ]}]}</pre>
+      </div>
+      <div>
+        <h3>참고</h3>
+        <p>값 1 은 origin 에서 가장 먼 꼭짓점까지 덮는 반지름입니다. 그래서 origin 이 모서리여도 1 에서 정확히 전체가 보입니다. 사각 clip 과 함께 쓰면 둘 다 적용됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 값 채널 -->
+  <section class="prop" id="value">
+    <div class="prop-head">
+      <h2>값 채널 (Motion.builder)</h2>
+      <div class="chips"><span class="chip">비용은 child 가 정함</span><span class="chip">Motion.builder</span></div>
+      <p>그리는 속성이 아니라, 타임라인이 계산한 숫자를 child 에 넘깁니다. 가격이 바뀌는 연출이나 진행 막대처럼 내용 자체가 움직이는 경우에 씁니다.</p>
+    </div>
+    <div class="compare">
+      <figure>
+        <div class="stage" data-demo="price"></div>
+        <figcaption><b>channel "price": 4900 → 3900</b><span>할인가로 숫자가 내려가고, 원래 가격이 나타납니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="countdown"></div>
+        <figcaption><b>channel "remain": 6 → 0</b><span>남은 시간과 진행 막대가 같은 값으로 움직입니다.</span></figcaption>
+      </figure>
+    </div>
+    <div class="impl">
+      <div>
+        <h3>Dart</h3>
+<pre>Motion.builder(
+  timeline: tl,           // "channels": [{ "name": "price", ... }]
+  controller: clock,
+  builder: (context, v) =&gt; Text(won(v['price'] ?? 0)),
+)</pre>
+      </div>
+      <div>
+        <h3>참고</h3>
+        <p>값이 바뀔 때마다 builder 가 다시 불리므로, 일반 속성과 달리 child 가 매 프레임 빌드됩니다. 숫자 텍스트처럼 작은 위젯에만 씁니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 부드러운 경계 -->
+  <section class="prop" id="feather">
+    <div class="prop-head">
+      <h2>feather</h2>
+      <div class="chips"><span class="chip high">비용 높음</span><span class="chip">ShaderMask 그라데이션</span></div>
+      <p>clip 와이프의 경계를 그라데이션으로 흐립니다. shimmer 와 같은 셰이더 마스크라 비쌉니다. <code>reduced</code> 품질에서는 생략되어 일반 clip 와이프로 보입니다.</p>
+    </div>
+    <div class="compare">
+      <figure>
+        <div class="stage" data-demo="wipeHard"></div>
+        <figcaption><b>clipRight</b><span>경계가 칼로 자른 듯 선명합니다.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="stage" data-demo="wipeSoft"></div>
+        <figcaption><b>clipRight + feather 0.3</b><span>경계가 요소 너비의 30% 폭으로 부드럽게 번집니다.</span></figcaption>
+      </figure>
+    </div>
+    <div class="impl">
+      <div>
+        <h3>JSON</h3>
+<pre>{ "prop": "feather", "keys": [{ "t": 0, "v": 0.3 }] }</pre>
+      </div>
+      <div>
+        <h3>참고</h3>
+        <p>보통 키프레임 하나로 고정해 씁니다. 셰이더 마스크라 한 화면에 많이 쓰면 저사양 단말에서 프레임이 떨어질 수 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>이 페이지의 움직임은 CSS 근사입니다. 곡선 값은 keyframe_motion 엔진과 조금 다를 수 있습니다. 엔진과 같은 값으로 재생하는 데모는 <code>design/motion-demo</code> 입니다.</p>
+  </footer>
+</main>
+
+<script>
+(() => {
+  // ───────── 곡선과 키프레임 샘플링 ─────────
+  const C = {
+    linear: (t) => t,
+    easeIn: (t) => t * t * t * 0.6 + t * t * 0.4,
+    easeOut: (t) => 1 - Math.pow(1 - t, 2.4),
+    easeInOut: (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2),
+    easeInCubic: (t) => t * t * t,
+    easeOutCubic: (t) => 1 - Math.pow(1 - t, 3),
+    easeInOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+    easeOutBack: (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  };
+  // keys: [[t, v, curve?], ...] — curve 는 그 키프레임에서 끝나는 구간에 적용
+  function sample(keys, t) {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      const [kt, kv, kc] = keys[i];
+      if (t < kt) {
+        const [pt, pv] = keys[i - 1];
+        return pv + (kv - pv) * (C[kc || 'linear'])((t - pt) / (kt - pt));
+      }
+    }
+    return keys[keys.length - 1][1];
+  }
+
+  // ───────── 데모 정의: 씬 HTML + 매 프레임 적용 ─────────
+  const won = (v) => '₩' + Math.round(v).toLocaleString('ko-KR');
+  const product = (name, now, was) => `
+    <div class="img"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#E08A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg></div>
+    <div class="name">${name}</div>
+    <div class="price"><span class="now">${now}</span><span class="was">${was}</span></div>`;
+  const lanes = (prefix) => [80, 180, 320].map((w, i) => `<div class="lane" data-el="${prefix}${i}" style="top:${18 + i * 64}px;width:${w}px;background:${['#FCA311', '#FFFFFF', '#8ECAE6'][i]}">${w}px</div>`).join('');
+  const circleClip = (el, v, ox, oy) => {
+    const w = el.offsetWidth, h = el.offsetHeight;
+    const cx = ox * w, cy = oy * h;
+    const far = Math.max(Math.hypot(cx, cy), Math.hypot(w - cx, cy), Math.hypot(cx, h - cy), Math.hypot(w - cx, h - cy));
+    el.style.clipPath = `circle(${(v * far).toFixed(2)}px at ${cx}px ${cy}px)`;
+  };
+  const featherMask = (el, p, f) => {
+    // p: 드러난 비율(0~1). p=0 이면 완전히 숨고 p=1 이면 완전히 보이도록 경계 중심을 옮긴다
+    const c = p * (1 + f) - f / 2;
+    const g = f > 0
+      ? `linear-gradient(90deg, #000 ${((c - f / 2) * 100).toFixed(2)}%, transparent ${((c + f / 2) * 100).toFixed(2)}%)`
+      : `linear-gradient(90deg, #000 ${(p * 100).toFixed(2)}%, transparent ${(p * 100).toFixed(2)}%)`;
+    el.style.maskImage = g; el.style.webkitMaskImage = g;
+  };
+  const wipeKeys = [[0, 0], [1400, 1, 'easeInOutCubic'], [2600, 1], [3400, 0, 'easeInOutCubic'], [4000, 0]];
+
+  const DEMOS = {
+    soldout: {
+      dur: 3600,
+      html: `<div class="el product" data-el="card" style="left:150px;top:30px;width:180px">${product('유기농 우유 1L', '₩2,980', '₩3,500')}</div>
+             <div class="el stamp" data-el="stamp" style="left:168px;top:100px;transform:rotate(-12deg)">SOLD OUT</div>`,
+      apply(q, t) {
+        const s = sample([[0, 1], [600, 1], [1200, 0, 'easeInOut'], [3000, 0], [3500, 1, 'easeInOut']], t);
+        q.card.style.filter = `saturate(${s.toFixed(3)})`;
+        const o = sample([[0, 0], [1100, 0], [1300, 1], [3000, 1], [3300, 0]], t);
+        const k = sample([[0, 1.6], [1100, 1.6], [1400, 1, 'easeOutBack']], t);
+        q.stamp.style.opacity = o; q.stamp.style.transform = `rotate(-12deg) scale(${k.toFixed(3)})`;
+      },
+    },
+    flash: {
+      dur: 1600,
+      html: `<div class="el banner" data-el="b" style="left:60px;top:85px;width:360px;height:100px;background:#E63946;color:#fff;font-size:34px">타임세일 50%</div>`,
+      apply(q, t) {
+        const b = sample([[0, 1], [200, 1.7, 'easeOut'], [700, 1, 'easeIn'], [1600, 1]], t);
+        q.b.style.filter = `brightness(${b.toFixed(3)})`;
+      },
+    },
+    hue: {
+      dur: 6000,
+      html: `<div class="el banner" data-el="b" style="left:60px;top:85px;width:360px;height:100px;background:linear-gradient(120deg,#FCA311,#E63946);color:#fff;font-size:32px">NEW ARRIVAL</div>`,
+      apply(q, t) { q.b.style.filter = `hue-rotate(${sample([[0, 0], [6000, 360]], t).toFixed(1)}deg)`; },
+    },
+    relFixed: {
+      dur: 2400,
+      html: `<div class="tag">translateX: -120</div><div class="window">${lanes('l')}</div>`,
+      apply(q, t) {
+        const x = sample([[0, -120], [700, 0, 'easeOutCubic']], t);
+        for (let i = 0; i < 3; i++) q['l' + i].style.transform = `translateX(${x.toFixed(2)}px)`;
+      },
+    },
+    relRel: {
+      dur: 2400,
+      html: `<div class="tag">translateXRel: -1</div><div class="window">${lanes('l')}</div>`,
+      apply(q, t) {
+        const r = sample([[0, -1], [700, 0, 'easeOutCubic']], t);
+        for (let i = 0; i < 3; i++) q['l' + i].style.transform = `translateX(${(r * 100).toFixed(3)}%)`;
+      },
+    },
+    circleCenter: {
+      dur: 3800,
+      html: `<div class="el coupon" data-el="c" style="left:90px;top:60px;width:300px;height:150px"><div><b>10%</b><br><span>가을맞이 할인 쿠폰</span></div></div>`,
+      apply(q, t) { circleClip(q.c, sample([[0, 0], [700, 1, 'easeOutCubic'], [2600, 1], [3200, 0, 'easeInCubic']], t), 0.5, 0.5); },
+    },
+    circleCorner: {
+      dur: 3800,
+      html: `<div class="el coupon" data-el="c" style="left:90px;top:60px;width:300px;height:150px"><div><b>10%</b><br><span>가을맞이 할인 쿠폰</span></div></div>`,
+      apply(q, t) { circleClip(q.c, sample([[0, 0], [900, 1, 'easeOutCubic'], [2600, 1], [3200, 0, 'easeInCubic']], t), 0, 0); },
+    },
+    price: {
+      dur: 4000,
+      html: `<div class="el product" data-el="card" style="left:150px;top:30px;width:180px">${product('한우 불고기 300g', '₩4,900', '₩4,900')}</div>`,
+      apply(q, t) {
+        const now = q.card.querySelector('.now'), was = q.card.querySelector('.was');
+        const v = sample([[0, 4900], [600, 4900], [1600, 3900, 'easeOutCubic'], [4000, 3900]], t);
+        now.textContent = won(Math.round(v / 10) * 10);
+        was.style.opacity = sample([[0, 0], [1500, 0], [1900, 1]], t);
+      },
+    },
+    countdown: {
+      dur: 6000,
+      html: `<div class="el" style="left:0;right:0;top:70px;text-align:center;font-size:14px;color:rgb(255 255 255 / .7)">행사 종료까지</div>
+             <div class="el countdown" data-el="n" style="left:0;right:0;top:94px;text-align:center">00:06</div>
+             <div class="bar-track" style="top:170px"><div class="bar-fill" data-el="f"></div></div>`,
+      apply(q, t) {
+        const r = sample([[0, 6], [6000, 0]], t);
+        q.n.textContent = '00:0' + Math.ceil(r);
+        q.f.style.transform = `scaleX(${(r / 6).toFixed(4)})`;
+      },
+    },
+    wipeHard: {
+      dur: 4000,
+      html: `<div class="el banner" data-el="b" style="left:60px;top:85px;width:360px;height:100px;background:linear-gradient(120deg,#219EBC,#14213D);color:#fff;font-size:32px">가을 신상품</div>`,
+      apply(q, t) { featherMask(q.b, sample(wipeKeys, t), 0); },
+    },
+    wipeSoft: {
+      dur: 4000,
+      html: `<div class="el banner" data-el="b" style="left:60px;top:85px;width:360px;height:100px;background:linear-gradient(120deg,#219EBC,#14213D);color:#fff;font-size:32px">가을 신상품</div>`,
+      apply(q, t) { featherMask(q.b, sample(wipeKeys, t), 0.3); },
+    },
+  };
+
+  // ───────── 화면 구성과 축소 ─────────
+  const stages = [];
+  for (const stage of document.querySelectorAll('.stage')) {
+    const demo = DEMOS[stage.dataset.demo];
+    const canvas = document.createElement('div');
+    canvas.className = 'canvas';
+    canvas.innerHTML = demo.html;
+    stage.appendChild(canvas);
+    const q = {};
+    for (const el of canvas.querySelectorAll('[data-el]')) q[el.dataset.el] = el;
+    stages.push({ demo, q });
+    new ResizeObserver(() => { canvas.style.transform = `scale(${stage.clientWidth / 480})`; }).observe(stage);
+  }
+
+  // ───────── 공유 시계 ─────────
+  const playBtn = document.getElementById('play'), scrub = document.getElementById('scrub'), timeEl = document.getElementById('time');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let playing = !reduce, T = reduce ? 1300 : 0, last = performance.now();
+  function render() {
+    for (const s of stages) s.demo.apply(s.q, T % s.demo.dur);
+    const shown = T % 6000;
+    scrub.value = shown;
+    timeEl.textContent = Math.round(shown) + ' ms';
+  }
+  function setPlaying(p) {
+    playing = p;
+    playBtn.textContent = p ? '일시정지' : '재생';
+    playBtn.setAttribute('aria-label', p ? '일시정지' : '재생');
+    last = performance.now();
+  }
+  function frame(now) {
+    if (playing) { T += now - last; render(); }
+    last = now;
+    requestAnimationFrame(frame);
+  }
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  document.getElementById('restart').addEventListener('click', () => { T = 0; setPlaying(true); render(); });
+  scrub.addEventListener('input', () => { setPlaying(false); T = +scrub.value; render(); });
+  setPlaying(playing);
+  render();
+  requestAnimationFrame(frame);
+})();
+</script>

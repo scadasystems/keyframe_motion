@@ -1,0 +1,21 @@
+name: keyframe_motion_example
+description: "keyframe_motion showcase, web motion lab, and performance scene."
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  keyframe_motion:
+    path: ..
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
